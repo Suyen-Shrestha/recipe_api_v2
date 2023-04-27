@@ -30,9 +30,10 @@ from drf_spectacular.utils import (
         ]
     )
 )
-class BaseRecipeAttrViewSet(viewsets.GenericViewSet,
+class BaseRecipeAttrViewSet(mixins.DestroyModelMixin,
+                            mixins.UpdateModelMixin,
                             mixins.ListModelMixin,
-                            mixins.CreateModelMixin):
+                            viewsets.GenericViewSet):
     """Base viewset for user owned recipe attributes"""
     authentication_classes = (TokenAuthentication,)
     permission_classes = (IsAuthenticated,)
@@ -45,9 +46,9 @@ class BaseRecipeAttrViewSet(viewsets.GenericViewSet,
             queryset = queryset.filter(recipe__isnull=False)
         return queryset.filter(user=self.request.user).order_by('-name')
 
-    def perform_create(self, serializer):
-        """Create a new object"""
-        serializer.save(user=self.request.user)
+    # def perform_create(self, serializer):
+    #     """Create a new object"""
+    #     serializer.save(user=self.request.user)
 
 
 class TagViewSet(BaseRecipeAttrViewSet):
