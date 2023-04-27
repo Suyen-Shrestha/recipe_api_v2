@@ -11,6 +11,25 @@ from .serializers import (TagSerializer, IngredientSerializer,
                           RecipeImageSerializer)
 
 
+from drf_spectacular.utils import (
+    extend_schema_view,
+    extend_schema,
+    OpenApiParameter,
+    OpenApiTypes,
+)
+
+
+@extend_schema_view(
+    list=extend_schema(
+        parameters=[
+            OpenApiParameter(
+                'assigned_only',
+                OpenApiTypes.INT, enum=[0, 1],
+                description='Filter by items assigned to recipes.',
+            ),
+        ]
+    )
+)
 class BaseRecipeAttrViewSet(viewsets.GenericViewSet,
                             mixins.ListModelMixin,
                             mixins.CreateModelMixin):
@@ -43,6 +62,22 @@ class IngredientViewSet(BaseRecipeAttrViewSet):
     serializer_class = IngredientSerializer
 
 
+@extend_schema_view(
+    list=extend_schema(
+        parameters=[
+            OpenApiParameter(
+                'tags',
+                OpenApiTypes.STR,
+                description='Comma separated list of tag IDs to filter',
+            ),
+            OpenApiParameter(
+                'ingredients',
+                OpenApiTypes.STR,
+                description='Comma separated list of ingredient IDs to filter',
+            ),
+        ]
+    )
+)
 class RecipeViewSet(viewsets.ModelViewSet):
     """Manage recipes in the database"""
     serializer_class = RecipeSerializer
